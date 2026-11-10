@@ -138,9 +138,9 @@ LRESULT CALLBACK PanelProc(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp) {
         RECT l{},c{},r{}; LayoutSlots(520,l,c,r);
         if(g_manager && p.y>=184 && p.y<283 && !g_tabs.empty()) {
             int i=(p.y-184)/33; if(i<(int)g_tabs.size() && i<3) { g_dragTab=i; SetCapture(hwnd); }
-        } else if(PtInRect(&l,p)) g_dragSlot=0;
-        else if(PtInRect(&c,p)) g_dragSlot=1;
-        else if(PtInRect(&r,p)) g_dragSlot=2;
+        } else if(PtInRect(&l,p)) { g_dragSlot=0; SetCapture(hwnd); }
+        else if(PtInRect(&c,p)) { g_dragSlot=1; SetCapture(hwnd); }
+        else if(PtInRect(&r,p)) { g_dragSlot=2; SetCapture(hwnd); }
         return 0;
     }
     case WM_LBUTTONUP: {
@@ -153,9 +153,10 @@ LRESULT CALLBACK PanelProc(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp) {
             g_dragTab=-1; ReleaseCapture(); InvalidateRect(hwnd,nullptr,TRUE); return 0;
         }
         if(g_dragSlot>=0) {
-            if(g_dragSlot==0 || g_dragSlot==2) SwapCenterWithSlot(g_dragSlot);
-            else RunItem(g_center,hwnd);
-            g_dragSlot=-1; InvalidateRect(hwnd,nullptr,TRUE); return 0;
+            if(g_dragSlot==1 && PtInRect(&c,p)) RunItem(g_center,hwnd);
+            else if(g_dragSlot==0 && PtInRect(&c,p)) SwapCenterWithSlot(0);
+            else if(g_dragSlot==2 && PtInRect(&c,p)) SwapCenterWithSlot(2);
+            g_dragSlot=-1; ReleaseCapture(); InvalidateRect(hwnd,nullptr,TRUE); return 0;
         }
         RECT menu{520/2-34,130,520/2+34,151};
         if(PtInRect(&menu,p)) ToggleManager();
