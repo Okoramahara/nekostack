@@ -48,8 +48,9 @@ LIMITACIONES CONOCIDAS DEL PROTOTIPO
 - Las miniaturas son marcadores visuales provisionales, no capturas reales de
   ventanas a 256x256. El distintivo usa la inicial del titulo; aun falta extraer
   el icono original de cada ejecutable y componerlo abajo a la izquierda.
-- La animacion de apertura/cierre y el soporte de arrastre nativo desde el gestor
-  de archivos son etapas posteriores.
+- La apertura/cierre es instantanea en esta primera prueba, sin animacion.
+- Se acepta arrastrar archivos desde Explorer a los tres slots; todavia no se
+  pueden arrastrar pestañas fuera de NekoBar ni soltar archivos sobre una pestaña.
 - El carrusel es una ventana flotante de NekoBar y no modifica Explorer, Winlogon
   ni el registro de Windows.
 
