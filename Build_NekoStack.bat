@@ -28,7 +28,7 @@ if exist "NekoStack.exe" if not exist "%BACKUP_051%" (
 )
 
 echo Compilando NekoStack 0.5.2 con selector de ejecutables...
-"%GXX%" -std=c++17 -O2 -Wall -Wextra -static -static-libgcc -static-libstdc++ -mwindows -municode -I. NekoStack.cpp Core\NekoCore.cpp Modules\NekoDesktop.cpp Modules\NekoLauncher.cpp Modules\NekoSettings.cpp -o "%TEMP_EXE%" -luser32 -lgdi32 -lshell32 -lcomdlg32
+"%GXX%" -std=c++17 -O2 -Wall -Wextra -static -static-libgcc -static-libstdc++ -mwindows -municode -I. NekoStack.cpp Core\NekoCore.cpp Modules\NekoDesktop.cpp Modules\NekoLauncher.cpp Modules\NekoSettings.cpp Modules\NekoBar.cpp -o "%TEMP_EXE%" -luser32 -lgdi32 -lshell32 -lcomdlg32
 if errorlevel 1 (
     echo.
     echo ERROR: La compilacion no termino correctamente.
