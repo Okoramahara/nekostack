@@ -1,0 +1,59 @@
+NEKOBAR 0.1 - PROTOTIPO DE CAPSULA Y CARRUSEL
+==============================================
+
+RAMA: feature/nekobar-capsule-01
+BASE: NekoStack 0.5.2
+
+QUE SE AGREGO
+-------------
+- Modulo independiente Modules/NekoBar.cpp y NekoBar.h.
+- Capsula discreta centrada en el borde inferior. Se muestra al acercar el puntero
+  a la zona central inferior de la pantalla.
+- Clic izquierdo en la capsula para mostrar u ocultar el carrusel.
+- Carrusel emergente con tres slots: izquierdo, central y derecho.
+- El centro queda fijo: el primer programa registrado ocupa el centro; las
+  siguientes aperturas se agregan al gestor y no reemplazan el centro.
+- Arrastrar una pestaña del gestor al centro intercambia ambos elementos; la
+  pestaña anterior ocupa el lugar exacto de la pestaña seleccionada.
+- Arrastrar una pestaña a un slot lateral intercambia el contenido y deja el
+  contenido desplazado en el lugar de la pestaña.
+- Arrastrar un slot lateral al centro intercambia solamente esos dos slots.
+- El boton ☰ despliega/oculta el gestor.
+- Arrastrar un archivo al slot central lo coloca en el centro y envia el anterior
+  al gestor; arrastrarlo a un lateral reemplaza ese lateral y envia el anterior
+  al gestor.
+
+INSTALACION
+-----------
+1. Descarga el ZIP de esta rama desde:
+   https://github.com/Okoramahara/nekostack/archive/refs/heads/feature/nekobar-capsule-01.zip
+2. Extrae el contenido sobre una copia de NekoStack 0.5.2, no sobre tu unica copia.
+3. Cierra NekoStack.exe.
+4. Ejecuta Build_NekoStack.bat.
+5. Abre NekoStack.exe y mueve el puntero al centro de la zona inferior de la pantalla.
+
+CONFIGURACION
+-------------
+Config/Modules.ini incluye Taskbar=1.
+Las instalaciones nuevas tambien habilitan Taskbar por defecto.
+
+LIMITACIONES CONOCIDAS DEL PROTOTIPO
+------------------------------------
+- Esta entrega no ha sido compilada ni ejecutada en el PC del usuario. La primera
+  comprobacion real debe ser la compilacion local.
+- La deteccion de aperturas se conecta a los lanzamientos iniciados desde NekoStack.
+  Todavia no enumera todas las ventanas abiertas externamente en Windows.
+- El gestor dibuja actualmente hasta tres filas visibles; no hay desplazamiento
+  vertical para listas mas largas.
+- Las miniaturas son marcadores visuales provisionales, no capturas reales de
+  ventanas a 256x256. El distintivo usa la inicial del titulo; aun falta extraer
+  el icono original de cada ejecutable y componerlo abajo a la izquierda.
+- La animacion de apertura/cierre y el soporte de arrastre nativo desde el gestor
+  de archivos son etapas posteriores.
+- El carrusel es una ventana flotante de NekoBar y no modifica Explorer, Winlogon
+  ni el registro de Windows.
+
+RESPALDO
+--------
+Esta rama no modifica main. Para volver a la version estable, descarga o usa la
+rama main del repositorio.
