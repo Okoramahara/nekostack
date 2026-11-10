@@ -52,7 +52,7 @@ bool CreateDefaultModules(const std::wstring& path) {
     if (FileExists(path)) return true;
 
     if (!WritePrivateProfileStringW(L"Modules", L"Desktop", L"1", path.c_str())) return false;
-    if (!WritePrivateProfileStringW(L"Modules", L"Taskbar", L"0", path.c_str())) return false;
+    if (!WritePrivateProfileStringW(L"Modules", L"Taskbar", L"1", path.c_str())) return false;
     if (!WritePrivateProfileStringW(L"Modules", L"Launcher", L"1", path.c_str())) return false;
     if (!WritePrivateProfileStringW(L"Modules", L"NekoSettings", L"1", path.c_str())) return false;
     if (!WritePrivateProfileStringW(L"Modules", L"Notifications", L"0", path.c_str())) return false;
