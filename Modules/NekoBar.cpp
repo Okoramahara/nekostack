@@ -204,7 +204,13 @@ void PollCursor() {
     } else ShowWindow(g_pill,SW_HIDE);
 }
 void NotifyOpened(const std::wstring& title,const std::wstring& command,const std::wstring& arguments) {
-    Item item{title,command,arguments}; AddToCenter(item);
+    Item item{title,command,arguments};
+    if(g_center.Empty()) g_center=item;
+    else if(g_center.command!=item.command || g_center.arguments!=item.arguments) {
+        bool exists=false;
+        for(const auto& tab:g_tabs) if(tab.command==item.command && tab.arguments==item.arguments) { exists=true; break; }
+        if(!exists) g_tabs.push_back(item);
+    }
     if(g_panel) InvalidateRect(g_panel,nullptr,TRUE);
 }
 void Shutdown() {
