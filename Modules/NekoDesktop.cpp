@@ -12,6 +12,7 @@
 #include "../Core/NekoCore.h"
 #include "NekoLauncher.h"
 #include "NekoSettings.h"
+#include "NekoBar.h"
 
 #include <windowsx.h>
 #include <shellapi.h>
@@ -30,6 +31,7 @@ constexpr int TITLE_H = 48;
 constexpr int SIDEBAR_W = 214;
 constexpr int BORDER = 7;
 constexpr UINT TIMER_ID = 1;
+constexpr UINT NEKOBAR_TIMER_ID = 2;
 constexpr int ACT_LAUNCH_APP_BASE = 1000;
 constexpr int MAX_LAUNCHER_ACTIONS = 9;
 
@@ -541,6 +543,7 @@ void DrawDesktop(HDC dc, RECT client) {
 
 void Launch(const wchar_t* target, const wchar_t* args = nullptr) {
     HINSTANCE result = ShellExecuteW(g_hwnd, L"open", target, args, nullptr, SW_SHOWNORMAL);
+    if (reinterpret_cast<INT_PTR>(result) > 32) NekoBar::NotifyOpened(target, target, args ? args : L"");
     if (reinterpret_cast<INT_PTR>(result) <= 32) {
         MessageBoxW(g_hwnd, L"No se pudo abrir esta aplicacion.", L"NekoStack", MB_OK | MB_ICONWARNING);
     }
@@ -568,7 +571,10 @@ void MaxRestore(HWND hwnd) {
 void DoAction(HWND hwnd, int action) {
     if (action >= ACT_LAUNCH_APP_BASE && action < ACT_LAUNCH_APP_BASE + MAX_LAUNCHER_ACTIONS) {
         const std::size_t index = static_cast<std::size_t>(action - ACT_LAUNCH_APP_BASE);
-        NekoLauncher::Launch(index, hwnd);
+        if (NekoLauncher::Launch(index, hwnd)) {
+            const auto& apps = NekoLauncher::GetApplications();
+            if (index < apps.size()) NekoBar::NotifyOpened(apps[index].name, apps[index].command, apps[index].arguments);
+        }
         return;
     }
 
@@ -630,11 +636,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         g_launcherEnabled = NekoCore::IsModuleEnabled(L"Launcher", false);
         g_settingsEnabled = NekoCore::IsModuleEnabled(L"NekoSettings", true);
         g_launcherReady = g_launcherEnabled && NekoLauncher::Initialize(NekoCore::GetPaths().config);
+        if (NekoCore::IsModuleEnabled(L"Taskbar", false)) NekoBar::Initialize(reinterpret_cast<HINSTANCE>(GetWindowLongPtrW(hwnd, GWLP_HINSTANCE)));
+        SetTimer(hwnd, NEKOBAR_TIMER_ID, 60, nullptr);
         SetTimer(hwnd, TIMER_ID, static_cast<UINT>(g_refreshMs), nullptr);
         return 0;
 
     case WM_TIMER:
         if (wp == TIMER_ID) { UpdateMetrics(); InvalidateRect(hwnd, nullptr, FALSE); }
+        if (wp == NEKOBAR_TIMER_ID) NekoBar::PollCursor();
         return 0;
 
     case WM_ERASEBKGND:
@@ -724,6 +733,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 
     case WM_DESTROY:
         KillTimer(hwnd, TIMER_ID);
+        KillTimer(hwnd, NEKOBAR_TIMER_ID);
+        NekoBar::Shutdown();
         NekoLauncher::Shutdown();
         DestroyFonts();
         PostQuitMessage(0);
