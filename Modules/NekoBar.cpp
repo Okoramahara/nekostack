@@ -164,8 +164,14 @@ LRESULT CALLBACK PanelProc(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp) {
     case WM_DROPFILES: {
         HDROP drop=(HDROP)wp; wchar_t path[32768]{};
         if(DragQueryFileW(drop,0,path,32768)) {
+            POINT dropPoint{}; DragQueryPoint(drop,&dropPoint);
+            RECT l{},c{},r{}; LayoutSlots(520,l,c,r);
             std::wstring full=path, name=full.substr(full.find_last_of(L"\\/")+1);
-            Item item{name,full,L""}; AddToCenter(item); ShowPanel(true); InvalidateRect(hwnd,nullptr,TRUE);
+            Item item{name,full,L""};
+            if(PtInRect(&c,dropPoint)) AddToCenter(item);
+            else if(PtInRect(&l,dropPoint)) { Item old=g_left; g_left=item; if(!old.Empty()) g_tabs.push_back(old); }
+            else if(PtInRect(&r,dropPoint)) { Item old=g_right; g_right=item; if(!old.Empty()) g_tabs.push_back(old); }
+            ShowPanel(true); InvalidateRect(hwnd,nullptr,TRUE);
         }
         DragFinish(drop); return 0;
     }
@@ -196,7 +202,7 @@ void PollCursor() {
     if(!g_pill||!g_panel) return;
     POINT p{}; GetCursorPos(&p);
     int sw=GetSystemMetrics(SM_CXSCREEN), sh=GetSystemMetrics(SM_CYSCREEN);
-    bool nearBottom=(p.y>=sh-8 && p.x>=sw/2-180 && p.x<=sw/2+180);
+    bool nearBottom=(p.y>=sh-48 && p.x>=sw/2-180 && p.x<=sw/2+180);
     RECT pr{},br{}; GetWindowRect(g_pill,&pr); GetWindowRect(g_panel,&br);
     bool overPill=PtInRect(&pr,p)!=FALSE, overPanel=g_open && PtInRect(&br,p)!=FALSE;
     if(nearBottom||overPill||overPanel||g_open) {
